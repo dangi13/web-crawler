@@ -1,13 +1,21 @@
 import puppeteer from 'puppeteer';
-let browser, page;
 
 export async function launchBrowser() {
-    browser = await puppeteer.launch({
+
+  const browser = await puppeteer.launch({
+            headless: true,
+            executablePath: process.env.CHROMIUM_PATH,
+            args: ['--no-sandbox'],
+            defaultViewport: null,
+            ignoreHTTPSErrors: true
+        });
+
+   /*  const browser = await puppeteer.launch({
         headless: false,
         args: ['--start-maximized'],
         defaultViewport: null,
         ignoreHTTPSErrors: true
-    });
+    }); */
     const pages = await browser.pages();
 
     return pages[0];  // defalut about blank page
