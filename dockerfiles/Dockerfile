@@ -19,7 +19,7 @@ WORKDIR /usr/app
 RUN git clone -q https://dangi13:${secrets.GITHUB_TOKEN}@github.com/dangi13/web-crawler.git
 WORKDIR /usr/app/web-crawler
 RUN npm install > /dev/null
-WORKDIR /usr/app/web-crawler/src/ui/__tests__/kitsune/L3VPN/jestapi
+WORKDIR /usr/app/web-crawler/src/ui/__tests__
 RUN echo -e "#!/bin/bash\n" \
         "npm test -t men-clothes.test.js" > script.sh
 RUN chmod 777 script.sh
