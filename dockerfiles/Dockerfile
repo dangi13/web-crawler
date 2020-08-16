@@ -16,7 +16,7 @@ ENV CHROMIUM_PATH /usr/bin/chromium-browser
 RUN apk add git
 WORKDIR /usr/app
 
-RUN git clone -q https://dangi13:d5e898d68597b1d8c5d87e6cf87b328dd2980659@github.com/dangi13/web-crawler.git
+RUN git clone -q https://dangi13:${secrets.GITHUB_TOKEN}@github.com/dangi13/web-crawler.git
 WORKDIR /usr/app/web-crawler
 RUN npm install > /dev/null
 WORKDIR /usr/app/web-crawler/src/ui/__tests__/kitsune/L3VPN/jestapi
