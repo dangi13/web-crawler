@@ -15,8 +15,10 @@ ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
 ENV CHROMIUM_PATH /usr/bin/chromium-browser
 RUN apk add git
 WORKDIR /usr/app
+ARG username
+ARG password
 
-RUN git clone -q https://dangi13:${secrets.GITHUB_TOKEN}@github.com/dangi13/web-crawler.git
+RUN git clone -q https://${username}:${password}@github.com/dangi13/web-crawler.git
 WORKDIR /usr/app/web-crawler
 RUN npm install > /dev/null
 WORKDIR /usr/app/web-crawler/src/ui/__tests__
