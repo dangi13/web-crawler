@@ -16,15 +16,12 @@ export default function submitAPIRequest(methodType, endpointURL, headers, body,
         url: endpointURL,
         headers: headers,
         body: body,
-        authorization: authorizationParams
+        auth: authorizationParams
     };
     
     console.log('Required params for the API: ' + JSON.stringify(requiredParams, null, "\t"));  // prints pretty JSON
-  /*   reporter.startStep("REQUEST");
-    reporter.startStep(JSON.stringify(requiredParams));
-    reporter.endStep(); */
 
     return axios(requiredParams).then(res => res)
-                                .catch(error => error)
+                                .catch(error => error.response)
                                 
 }
