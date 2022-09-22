@@ -4,7 +4,7 @@ node_modules/
 # Optional npm cache directory
 .npm
 
-# Stores VSCode versions used for testing VSCode extensions
+#  Stores VSCode versions used for testing VSCode extensions
 .vscode
 
 # test reports
