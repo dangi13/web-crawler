@@ -2,8 +2,8 @@ name: Docker Build and Update Manifest file
 
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main 
 
 jobs:
   build-and-update:
