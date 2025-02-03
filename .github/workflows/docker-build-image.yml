@@ -34,5 +34,5 @@ jobs:
     secrets: inherit
     with:
       version: ${{ needs.generate_version_id.outputs.version_identifier }} 
-      repository_name: github.event.repository.name
+      repository_name: ${{ github.event.repository.name }}
       
