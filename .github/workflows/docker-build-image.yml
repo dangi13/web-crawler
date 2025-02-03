@@ -23,8 +23,10 @@ jobs:
 
       - name: Read commit hash
         id: read_commit_hash
-        uses: actions/read-file@v3
+        uses: actions/github-script@v6
         with:
+        script: |
+            return core.getInput('path'); 
           path: short_commit_id.txt
 
       - name: Checkout releases repo
