@@ -18,8 +18,8 @@ jobs:
 
       - name: Update manifest.json
         run: |
-          jq '.repository_versions["repo_A"] = "'"$GITHUB_SHA"'"' releases/manifest.json > releases/manifest.json.tmp 
-          mv releases/manifest.json.tmp releases/manifest.json 
+          jq '.repository_versions["repo_A"] = "'"$GITHUB_SHA"'"' releases/manifests/dev.json > releases/manifests/dev.json.tmp 
+          mv releases/manifests/dev.json.tmp releases/manifests/dev.json 
 
       - name: Commit and push changes
         run: |
