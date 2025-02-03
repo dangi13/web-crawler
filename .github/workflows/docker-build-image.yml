@@ -8,10 +8,6 @@ on:
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -38,7 +34,7 @@ jobs:
         with:
           repository: dangi13/releases
           ref: master
-          persist-credentials: true 
+          persist-credentials: false 
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update dev.json
@@ -56,12 +52,14 @@ jobs:
           mv manifests/dev.json.tmp manifests/dev.json
 
       - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@github.com"
           git add manifests/dev.json
           git commit -m "Update crawler version in dev.json to ${{ steps.update_manifest.outputs.new_version }}"
-          git push origin main
+          git push origin master
 
       - name: Login to Docker registry
         run: |
