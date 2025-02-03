@@ -27,6 +27,7 @@ jobs:
       version_identifier: ${{ env.VERSION_IDENTIFIER }}
 
   docker_publish:
+    needs: version-identifier
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
       image_tag: ${{ needs.version-identifier.outputs.version_identifier }} 
