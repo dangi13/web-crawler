@@ -25,7 +25,7 @@ jobs:
     needs: generate_version
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
-      image_tag: ${{ needs.generate_version.outputs.version_identifier }} 
+      image_tag: ${{ generate_version.outputs.version_identifier }} 
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
 
   update_manifest:
@@ -33,6 +33,6 @@ jobs:
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v6
     secrets: inherit
     with:
-      version: ${{ needs.generate_version.outputs.version_identifier }}
+      version: ${{ generate_version.outputs.version_identifier }}
       repository_name: ${{ github.event.repository.name }}
       
