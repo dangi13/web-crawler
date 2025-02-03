@@ -27,7 +27,7 @@ jobs:
           node-version: 12.x
 
   docker_publish:
-    needs: version-identifier
+    needs: setup-env
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
       image_tag: ${{ needs.version-identifier.outputs.version_identifier }} 
