@@ -19,7 +19,7 @@ jobs:
 
       - name: Get latest commit hash
         run: |
-          git rev-parse --short HEAD > short_commit_id.txt
+          echo "::set-output name=short_commit_hash::$(git rev-parse --short HEAD)"
 
       - name: Read commit hash
         id: read_commit_hash
@@ -42,7 +42,7 @@ jobs:
           major_version=$(echo "${{ github.ref }}" | cut -d '.' -f 1)
           minor_version=$(echo "${{ github.ref }}" | cut -d '.' -f 2)
           build_id=$(date +%s)
-          short_commit_id=$(cat short_commit_id.txt)
+          short_commit_id="${{ steps.get_commit_hash.outputs.short_commit_hash }}" 
           new_version="${major_version}.${minor_version}.${build_id}_${short_commit_id}"
 
           jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
