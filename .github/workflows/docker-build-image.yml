@@ -26,27 +26,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-
-      - name: Checkout releases repo
-        uses: actions/checkout@v4
-        with:
-          repository: dangi13/releases
-          ref: main
-          persist-credentials: true 
-          token: ${{ secrets.PAT }}
-
-      - name: Update dev.json
-        run: | 
-          new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
-          mv manifests/dev.json.tmp manifests/dev.json
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config user.email "dangi13+github-actions@users.noreply.github.com"
-          git add manifests/dev.json
-          git commit -m "Update web-rawler version in dev.json"
-          git push origin main
       - name: Login to Docker registry
         run: |
           echo "LOGIN TO DOCKER REGISTRY"
@@ -59,3 +38,24 @@ jobs:
         run: |
           new_version=${{ needs.version-identifier.outputs.version_identifier }}
           docker push docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version}
+
+      - name: Checkout releases repo
+        uses: actions/checkout@v4
+        with:
+          repository: dangi13/releases
+          ref: main
+          persist-credentials: true 
+          token: ${{ secrets.PAT }}
+
+      - name: Update manifest dev.json
+        run: | 
+          new_version=${{ needs.version-identifier.outputs.version_identifier }}
+          jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
+          mv manifests/dev.json.tmp manifests/dev.json
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config user.email "dangi13+github-actions@users.noreply.github.com"
+          git add manifests/dev.json
+          git commit -m "Update web-rawler version in dev.json"
+          git push origin main
