@@ -1,0 +1,30 @@
+name: Update Manifest File
+
+on:
+  push:
+    branches:
+      - master
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout releases repo
+        uses: actions/checkout@v3
+        with:
+          repository: dangi13/releases
+          ref: main
+          persist-credentials: false
+          token: ${{ secrets.RELEASE_SECRET }}
+
+      - name: Update manifest.json
+        run: |
+          jq '.repository_versions["repo_A"] = "'"$GITHUB_SHA"'"' releases/manifest.json > releases/manifest.json.tmp 
+          mv releases/manifest.json.tmp releases/manifest.json 
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git add releases/manifest.json
+          git commit -m "Update repo_A version in manifest.json"
+          git push origin main

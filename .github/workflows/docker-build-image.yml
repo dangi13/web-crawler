@@ -39,7 +39,7 @@ jobs:
           repository: dangi13/releases
           ref: main
           persist-credentials: true 
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_SECRET }}
 
       - name: Update dev.json
         id: update_manifest 
