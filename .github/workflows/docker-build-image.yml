@@ -37,9 +37,9 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: dangi13/releases
-          ref: main
+          ref: master
           persist-credentials: true 
-          token: ${{ secrets.RELEASE_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update dev.json
         id: update_manifest 
