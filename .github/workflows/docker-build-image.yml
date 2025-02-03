@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       id-token: write
-      contents: read
+      contents: write
       deployments: write
     steps:
       - name: Checkout code
@@ -38,7 +38,7 @@ jobs:
           repository: dangi13/releases
           ref: main
           persist-credentials: false 
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
 
       - name: Update dev.json
         run: |
@@ -50,12 +50,9 @@ jobs:
           jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
           mv manifests/dev.json.tmp manifests/dev.json
       - name: Commit and push changes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@github.com"
-          git config --global url.https://${{ secrets.GITHUB_TOKEN }}@github.com/.insteadOf https://github.com/
           git add manifests/dev.json
           git commit -m "Update web-rawler version in dev.json"
           git push origin main
