@@ -22,12 +22,14 @@ jobs:
     uses: dangi13/workflows/.github/workflows/version-identifier.yml@v6
 
   docker_publish:
+    needs: generate_version
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
       image_tag: ${{ needs.generate_version.outputs.version_identifier }} 
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
 
   update_manifest:
+    needs: docker_publish
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v6
     secrets: inherit
     with:
