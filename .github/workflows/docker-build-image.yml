@@ -9,9 +9,7 @@ jobs:
   build-and-update:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write
       contents: write
-      deployments: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -52,7 +50,7 @@ jobs:
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions@github.com"
+          git config user.email "dangi13+github-actions@users.noreply.github.com"
           git add manifests/dev.json
           git commit -m "Update web-rawler version in dev.json"
           git push origin main
