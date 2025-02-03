@@ -35,7 +35,7 @@ jobs:
           repository: dangi13/releases
           ref: main
           persist-credentials: false 
-          keyfile: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update dev.json
         run: |
@@ -55,7 +55,7 @@ jobs:
           git add manifests/dev.json
           git commit -m "Update web-crawler version in dev.json"
           git push origin main
-          env:
+        env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Docker registry
