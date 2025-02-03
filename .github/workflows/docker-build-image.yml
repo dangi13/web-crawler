@@ -23,12 +23,14 @@ jobs:
 
   update_manifest:
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v1
+    needs: generate_version_id
     with:
-      github_ref: ${{ github.ref }}
+      version: ${{ needs.generate_version_id.outputs.version_identifier }} 
       repository_name: ${{ github.repository }} 
 
   docker_publish:
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v1
+    needs: generate_version_id
     with:
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
       image_tag: ${{ needs.generate_version_id.outputs.version_identifier }}
