@@ -21,18 +21,18 @@ jobs:
   generate_version_id:
     uses: dangi13/workflows/.github/workflows/version-identifier.yml@v6
 
+  docker_publish:
+    needs: generate_version_id
+    uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
+    with:
+      image_tag: ${{ needs.generate_version_id.outputs.version_identifier }}
+      image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
+
   update_manifest:
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v6
     needs: generate_version_id
     secrets: inherit
     with:
       version: ${{ needs.generate_version_id.outputs.version_identifier }} 
-      repository_name: ${{ github.repository_name }}   
-
-  docker_publish:
-    needs: generate_version_id
-    uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
-    with:
-      image_tag: helllllllll
-      image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
+      repository_name: github.event.repository.name
       
