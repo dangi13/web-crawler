@@ -49,14 +49,14 @@ jobs:
           mv manifests/dev.json.tmp manifests/dev.json
 
       - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@github.com"
           git add manifests/dev.json
           git commit -m "Update web-rawler version in dev.json"
           git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Login to Docker registry
         run: |
