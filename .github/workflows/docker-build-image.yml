@@ -1,4 +1,4 @@
-name: Docker Build and Update Manifest
+name: Docker Build and Update Manifest file
 
 on:
   push:
