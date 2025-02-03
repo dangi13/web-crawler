@@ -18,18 +18,18 @@ jobs:
         with:
           node-version: 12.x
 
-      - name: Generate Version Identifier
+    generate_version_id:
         id: generate_version_id
         uses: dangi13/workflows/.github/workflows/version-identifier.yml@v1
 
-      - name: Update Manifest
+    update_manifest:
         uses: dangi13/workflows/.github/workflows/update-manifest.yml@v1
         with:
           github_ref: ${{ github.ref }}
           repository_name: ${{ github.repository }} 
           github_token: ${{ secrets.PAT }} 
 
-      - name: Deploy to Docker
+    docker_publish:
         uses: dangi13/workflows/.github/workflows/docker-publish.yml@v1
         with:
           image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
