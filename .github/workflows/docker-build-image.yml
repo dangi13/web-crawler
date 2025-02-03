@@ -6,6 +6,14 @@ on:
       - master
 
 jobs: 
+  version-identifier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: set version identifier
+        run: echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
+    outputs:
+      version_identifier: ${{ env.VERSION_IDENTIFIER }}
+
   setup-env:
     runs-on: ubuntu-latest
     permissions: write-all
@@ -17,14 +25,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-
-  version-identifier:
-    runs-on: ubuntu-latest
-    steps:
-      - name: set version identifier
-        run: echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
-    outputs:
-      version_identifier: ${{ env.VERSION_IDENTIFIER }}
 
   docker_publish:
     needs: version-identifier
