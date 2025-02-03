@@ -1,25 +1,71 @@
-name: Docker Build
+name: Docker Build and Update Manifest
+
 on:
   push:
     tags:
       - '*'
 
 jobs:
-  build:
+  build-and-update:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout
-        uses: actions/checkout@v1
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Use Node.js 12.x
         uses: actions/setup-node@v1
         with:
-           node-version: 12.x
-      - name: package docker
-        run: |
-          VERSION=$(date +%s)
-          docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN}}
-          docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/dangi13/web-crawler/crawler:${VERSION} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN}}
-          docker push docker.pkg.github.com/dangi13/web-crawler/crawler:${VERSION}  
-        env:
-          CI: true
+          node-version: 12.x
 
+      - name: Get latest commit hash
+        run: |
+          git rev-parse --short HEAD > short_commit_id.txt
+
+      - name: Read commit hash
+        id: read_commit_hash
+        uses: actions/read-file@v3
+        with:
+          path: short_commit_id.txt
+
+      - name: Checkout releases repo
+        uses: actions/checkout@v3
+        with:
+          repository: https://github.com/dangi13/releases
+          ref: main
+          persist-credentials: false 
+          keyfile: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update dev.json
+        run: |
+          major_version=$(echo "${{ github.ref }}" | cut -d '.' -f 1)
+          minor_version=$(echo "${{ github.ref }}" | cut -d '.' -f 2)
+          build_id=$(date +%s)
+          short_commit_id=$(cat short_commit_id.txt)
+          new_version="${major_version}.${minor_version}.${build_id}_${short_commit_id}"
+
+          jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
+          mv manifests/dev.json.tmp manifests/dev.json
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions@github.com"
+          git add manifests/dev.json
+          git commit -m "Update web-crawler version in dev.json"
+          git push origin main
+
+      - name: Login to Docker registry
+        run: |
+          echo "LOGIN TO DOCKER REGISTRY"
+          docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: |
+          docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image
+        run: |
+          docker push docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version}
+
+  env:
+    CI: true
