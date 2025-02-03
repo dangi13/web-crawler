@@ -8,6 +8,10 @@ on:
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      deployments: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
