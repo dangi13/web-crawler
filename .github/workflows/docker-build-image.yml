@@ -33,11 +33,11 @@ jobs:
       - name: Build Docker image
         run: |
           new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN }}
+          docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/dangi13/web-crawler/crawler:${new_version} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN }}
       - name: Push Docker image
         run: |
           new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          docker push docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version}
+          docker push docker.pkg.github.com/dangi13/web-crawler/crawler:${new_version}
 
       - name: Checkout releases repo
         uses: actions/checkout@v4
