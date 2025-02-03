@@ -19,17 +19,17 @@ jobs:
           node-version: 12.x
 
   generate_version_id:
-    uses: dangi13/workflows/.github/workflows/version-identifier.yml@v1
+    uses: dangi13/workflows/.github/workflows/version-identifier.yml@v3
 
   update_manifest:
-    uses: dangi13/workflows/.github/workflows/update-manifest.yml@v1
+    uses: dangi13/workflows/.github/workflows/update-manifest.yml@v3
     needs: generate_version_id
     with:
       version: ${{ needs.generate_version_id.outputs.version_identifier }} 
       repository_name: ${{ github.repository }} 
 
   docker_publish:
-    uses: dangi13/workflows/.github/workflows/docker-publish.yml@v1
+    uses: dangi13/workflows/.github/workflows/docker-publish.yml@v3
     needs: generate_version_id
     with:
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
