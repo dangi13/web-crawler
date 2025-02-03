@@ -25,7 +25,7 @@ jobs:
         id: read_commit_hash
         uses: actions/github-script@v6
         with:
-        script: |
+          script: |
             return core.getInput('path'); 
           path: short_commit_id.txt
 
