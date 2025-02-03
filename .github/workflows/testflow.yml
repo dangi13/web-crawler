@@ -14,7 +14,7 @@ jobs:
           repository: dangi13/releases
           ref: main
           persist-credentials: false
-          token: ${{ secrets.RELEASE_SECRET }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update manifest.json
         run: |
