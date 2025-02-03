@@ -22,7 +22,6 @@ jobs:
     uses: dangi13/workflows/.github/workflows/version-identifier.yml@v6
 
   docker_publish:
-    needs: generate_version
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
       image_tag: ${{ needs.generate_version.outputs.version_identifier }} 
@@ -30,7 +29,6 @@ jobs:
 
   update_manifest:
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v6
-    needs: generate_version
     secrets: inherit
     with:
       version: ${{ needs.generate_version.outputs.version_identifier }}
