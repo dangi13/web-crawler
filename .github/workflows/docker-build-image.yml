@@ -6,8 +6,17 @@ on:
       - master
 
 jobs:
-  build-and-update:
+  version-identifier:
     runs-on: ubuntu-latest
+    steps:
+      - name: set version identifier
+        run: echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
+    outputs:
+      version_identifier: ${{ env.VERSION_IDENTIFIER }}
+      
+  setup-env:
+    runs-on: ubuntu-latest
+    needs: version-identifier
     permissions: write-all
     steps:
       - name: Checkout code
@@ -18,14 +27,11 @@ jobs:
         with:
           node-version: 12.x
 
-  generate_version:
-    uses: dangi13/workflows/.github/workflows/version-identifier.yml@v6
-
   docker_publish:
-    needs: generate_version
+    needs: version-identifier
     uses: dangi13/workflows/.github/workflows/docker-publish.yml@v6
     with:
-      image_tag: ${{ needs.generate_version.outputs.version_identifier }} 
+      image_tag: ${{ needs.version-identifier.outputs.version_identifier }} 
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
 
   update_manifest:
@@ -33,6 +39,6 @@ jobs:
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v6
     secrets: inherit
     with:
-      version: ${{ needs.generate_version.outputs.version_identifier }}
+      version: ${{ needs.version-identifier.outputs.version_identifier }}
       repository_name: ${{ github.event.repository.name }}
       
