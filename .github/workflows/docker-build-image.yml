@@ -66,5 +66,3 @@ jobs:
       - name: Push Docker image
         run: |
           docker push docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version}
-        env:
-        CI: true
