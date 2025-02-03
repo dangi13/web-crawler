@@ -8,8 +8,6 @@ on:
 jobs:
   build-and-update:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,7 +20,6 @@ jobs:
       - name: Get latest commit hash
         run: |
           echo "::set-output name=short_commit_hash::$(git rev-parse --short HEAD)"
-
       - name: Read commit hash
         id: read_commit_hash
         uses: actions/github-script@v6
@@ -40,19 +37,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update dev.json
-        id: update_manifest 
-
         run: |
-          major_version=$(echo "${{ github.ref }}" | cut -d '/' -f 3 | cut -d '.' -f 1)
-          minor_version=$(echo "${{ github.ref }}" | cut -d '/' -f 3 | cut -d '.' -f 2)
+          major_version=$(echo "${{ github.ref }}" | cut -d '.' -f 1)
+          minor_version=$(echo "${{ github.ref }}" | cut -d '.' -f 2)
           build_id=$(date +%s)
           short_commit_id="${{ steps.get_commit_hash.outputs.short_commit_hash }}" 
           new_version="${major_version}.${minor_version}.${build_id}_${short_commit_id}"
-          echo "::set-output name=new_version::${new_version}" 
-
-          jq '.["crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
+          jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
           mv manifests/dev.json.tmp manifests/dev.json
-
       - name: Commit and push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -60,18 +52,15 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions@github.com"
           git add manifests/dev.json
-          git commit -m "Update crawler version in dev.json to ${{ steps.update_manifest.outputs.new_version }}"
+          git commit -m "Update web-rawler version in dev.json"
           git push origin master
-
       - name: Login to Docker registry
         run: |
           echo "LOGIN TO DOCKER REGISTRY"
           docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build Docker image
         run: |
           docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN }}
-
       - name: Push Docker image
         run: |
           docker push docker.pkg.github.com/web-crawler/leg-versioner/crawler:${new_version}
