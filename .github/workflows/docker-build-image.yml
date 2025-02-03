@@ -1,22 +1,13 @@
-name: Docker Build and Update Manifest file
+name: Docker Build and Update Manifest
 
 on:
   push:
     branches:
-      - master 
+      - master
 
 jobs:
-  version-identifier:
-    runs-on: ubuntu-latest
-    steps:
-      - name: set version identifier
-        run: echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
-    outputs:
-      version_identifier: ${{ env.VERSION_IDENTIFIER }}
-
   build-and-update:
     runs-on: ubuntu-latest
-    needs: version-identifier
     permissions: write-all
     steps:
       - name: Checkout code
@@ -26,36 +17,20 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: Login to Docker registry
-        run: |
-          echo "LOGIN TO DOCKER REGISTRY"
-          docker login docker.pkg.github.com --username dangi13 --password ${{ secrets.GITHUB_TOKEN }}
-      - name: Build Docker image
-        run: |
-          new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          docker build . --file ./dockerfiles/Dockerfile --tag docker.pkg.github.com/dangi13/web-crawler/crawler:${new_version} --build-arg username=dangi13 --build-arg password=${{ secrets.GITHUB_TOKEN }}
-      - name: Push Docker image
-        run: |
-          new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          docker push docker.pkg.github.com/dangi13/web-crawler/crawler:${new_version}
 
-      - name: Checkout releases repo
-        uses: actions/checkout@v4
+      - name: Generate Version Identifier
+        id: generate_version_id
+        uses: dangi13/workflows/.github/workflows/version-identifier.yml@v1
+
+      - name: Update Manifest
+        uses: dangi13/workflows/.github/workflows/update-manifest.yml@v1
         with:
-          repository: dangi13/releases
-          ref: main
-          persist-credentials: true 
-          token: ${{ secrets.PAT }}
+          github_ref: ${{ github.ref }}
+          repository_name: ${{ github.repository }} 
+          github_token: ${{ secrets.PAT }} 
 
-      - name: Update manifest dev.json
-        run: | 
-          new_version=${{ needs.version-identifier.outputs.version_identifier }}
-          jq '.["web-crawler"] = "'"$new_version"'"' manifests/dev.json > manifests/dev.json.tmp
-          mv manifests/dev.json.tmp manifests/dev.json
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config user.email "dangi13+github-actions@users.noreply.github.com"
-          git add manifests/dev.json
-          git commit -m "Update web-rawler version in dev.json"
-          git push origin main
+      - name: Deploy to Docker
+        uses: dangi13/workflows/.github/workflows/docker-publish.yml@v1
+        with:
+          image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
+          image_tag: ${{ needs.generate_version_id.outputs.version_identifier }}
