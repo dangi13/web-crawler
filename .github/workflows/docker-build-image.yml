@@ -21,6 +21,8 @@ jobs:
       - name: Get latest commit hash
         run: |
           echo "::set-output name=short_commit_hash::$(git rev-parse --short HEAD)"
+          echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
+
       - name: Read commit hash
         id: read_commit_hash
         uses: actions/github-script@v6
