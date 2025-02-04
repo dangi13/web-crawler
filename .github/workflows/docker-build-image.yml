@@ -7,7 +7,12 @@ on:
 
 jobs: 
   version_identifier:
-   uses: dangi13/workflows/.github/workflows/version-identifier.yml@v10
+    runs-on: ubuntu-latest
+    steps:
+      - name: set version identifier
+        run: echo "VERSION_IDENTIFIER=0.1.${GITHUB_RUN_NUMBER}_${GITHUB_RUN_ATTEMPT}_${GITHUB_SHA:0:7}" | tee $GITHUB_ENV
+    outputs:
+      version_identifier: ${{ env.VERSION_IDENTIFIER }}
    
   docker_publish:
     needs: version_identifier
