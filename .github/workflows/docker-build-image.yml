@@ -7,7 +7,7 @@ on:
 
 jobs: 
   version-identifier:
-   uses: ./.github/workflows/generate_version_id.yml 
+   uses: dangi13/workflows/.github/workflows/version-identifier.yml@v9
    
   docker_publish:
     needs: version-identifier
