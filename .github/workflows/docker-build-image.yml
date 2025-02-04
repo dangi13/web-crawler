@@ -7,7 +7,7 @@ on:
 
 jobs: 
   version_identifier:
-   uses: dangi13/workflows/.github/workflows/version-identifier.yml@v9
+   uses: dangi13/workflows/.github/workflows/version-identifier.yml@v10
    
   docker_publish:
     needs: version_identifier
@@ -18,7 +18,7 @@ jobs:
 
   update_manifest:
     needs: [docker_publish, version_identifier]
-    uses: dangi13/workflows/.github/workflows/update-manifest.yml@v9
+    uses: dangi13/workflows/.github/workflows/update-manifest.yml@v10
     secrets: inherit
     with:
       version: ${{ needs.version_identifier.outputs.version_identifier }}
