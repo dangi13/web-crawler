@@ -22,7 +22,7 @@ jobs:
       image_name: docker.pkg.github.com/dangi13/web-crawler/crawler
 
   update_manifest:
-    needs: docker_publish
+    needs: [docker_publish, version-identifier]
     uses: dangi13/workflows/.github/workflows/update-manifest.yml@v7
     secrets: inherit
     with:
